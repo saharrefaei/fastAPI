@@ -1,4 +1,4 @@
-from fastapi import FastAPI , Query
+from fastapi import FastAPI , Query , Path
 from enum import Enum
 
 app = FastAPI()
@@ -57,14 +57,21 @@ async def List_items(
         items_DB.update({"query":q}) 
      return items_DB
 
-# using in the url : /items/{item_id}?q=33&short=True
-@app.get("/items/{item_id}")
-async def addItems(item_id: str, query: str | None = None , short:bool =False):
-       item = {"item_id": item_id}
-       if query:
-        item.update({"item_id": item_id, "query": query})
-       if short == True :
-        item.update({"description " : " you selected the short True"})
-       return item
 
+
+# using in the url : /items/{item_id}?q=33&short=True
+
+@app.get("/items/{item_id}")
+async def addItems(
+    *,
+    query: str | None = None,
+    item_id: int = Path(..., title="the path"),
+    short: bool = False
+):
+    item = {"item_id": item_id}
+    if query:
+        item.update({"item_id": item_id, "query": query})
+    if short:
+        item.update({"description": "you selected the short True"})
+    return item
 
