@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+# im able to add any routes depends on my project requeiremnts
 
 @app.get("/" , description='This is my first get api')
 async def root():
