@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI , Query
 from enum import Enum
 
 app = FastAPI()
@@ -42,12 +42,20 @@ async def Get_food(foodName :FoodCategoryEnum ):
  
  
     
-fake_items_DB = [{"items_Name": "cake"}, {"items_Name": "drink"}, {"items_Name": "beer"}]
 @app.get('/items')
-async def List_items(skip: int = 0, limit: int = 10):
-    return fake_items_DB[skip: skip + limit]
-
-
+async def List_items(
+     q:str | None =Query(
+         None ,
+         min_length=1,
+         max_length=10,
+         title= "sample items",
+         description="sample description",
+         alias="items-query"
+     )):
+     items_DB ={"items" : [{"items_Name": "cake"}, {"items_Name": "drink"}, {"items_Name": "beer"}]}
+     if q :
+        items_DB.update({"query":q}) 
+     return items_DB
 
 # using in the url : /items/{item_id}?q=33&short=True
 @app.get("/items/{item_id}")
@@ -58,5 +66,5 @@ async def addItems(item_id: str, query: str | None = None , short:bool =False):
        if short == True :
         item.update({"description " : " you selected the short True"})
        return item
-   
+
 
